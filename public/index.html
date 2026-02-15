@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabungan AI · Verifikasi Uang</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz@14..32&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <!-- Kartu Total Tabungan -->
+    <div class="glass-card total-card">
+      <div class="total-header">
+        <span class="title">TabunganImbian</span>
+        <span class="badge">AI Verifikasi</span>
+      </div>
+      <div class="total-amount">Rp 0</div>
+      <div class="target-info">
+        <span>Target: Rp 5.000.000</span>
+        <span class="percentage">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 0%;"></div>
+      </div>
+      <div class="action-buttons">
+        <button class="action-btn nabung" id="nabungBtn">↓ Nabung</button>
+        <button class="action-btn tarik" id="tarikBtn">↑ Tarik</button>
+      </div>
+    </div>
+
+    <!-- Form Setor Tunai -->
+    <div class="glass-card form-card" id="formNabung">
+      <h3>Mau nabung berapa?</h3>
+      <div class="input-group">
+        <input type="number" id="amountInput" placeholder="Rp 0" min="1000" step="1000">
+      </div>
+
+      <div class="upload-area">
+        <p>Bukti Foto <span>(Biar Valid)</span></p>
+        <label for="fileInput" class="upload-btn">Ambil Foto Uang</label>
+        <input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+        <div class="preview" id="preview"></div>
+      </div>
+
+      <button class="simpan-btn" id="simpanBtn">SIMPAN TABUNGAN</button>
+    </div>
+
+    <!-- Riwayat Transaksi -->
+    <div class="glass-card riwayat-card">
+      <div class="riwayat-header">
+        <h3>Riwayat Transaksi</h3>
+        <button class="hapus-btn" id="hapusRiwayatBtn">Hapus Riwayat</button>
+      </div>
+      <div class="riwayat-list" id="riwayatList">
+        <div class="empty-state">Belum ada transaksi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Loading AI -->
+  <div class="modal-overlay" id="loadingModal">
+    <div class="modal-content">
+      <div class="spinner"></div>
+      <h2>Sabar ya…</h2>
+      <p class="loading-message" id="loadingMessage">AI sedang mendeteksi objek...</p>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
