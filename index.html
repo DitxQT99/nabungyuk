@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabungan AI · Verifikasi Uang</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(145deg, #0b1a2e 0%, #1b3b4f 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 16px;
+    }
+
+    .container {
+      max-width: 480px;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .glass-card {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 32px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+      padding: 24px;
+      color: white;
+      transition: all 0.2s ease;
+    }
+
+    .total-card .total-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      background: linear-gradient(135deg, #a0f0ea, #76e5c0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .badge {
+      background: rgba(0, 255, 200, 0.2);
+      padding: 6px 12px;
+      border-radius: 40px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      border: 1px solid rgba(0, 255, 200, 0.4);
+      color: #b3fff0;
+    }
+
+    .total-amount {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      text-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
+    }
+
+    .target-info {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      color: #cbd5e0;
+      margin-bottom: 12px;
+    }
+
+    .progress-bar {
+      background: rgba(255, 255, 255, 0.1);
+      height: 10px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #00e0c0, #00aaff);
+      width: 0%;
+      transition: width 0.5s cubic-bezier(0.2, 0.9, 0.3, 1);
+      box-shadow: 0 0 12px #00e0c0;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .action-btn {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 14px;
+      border-radius: 40px;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s;
+      backdrop-filter: blur(4px);
+    }
+
+    .action-btn.nabung:hover {
+      background: rgba(0, 255, 200, 0.2);
+      border-color: #00ffc0;
+      box-shadow: 0 0 15px #00ffc0;
+    }
+
+    .action-btn.tarik:hover {
+      background: rgba(255, 100, 100, 0.2);
+      border-color: #ff7b7b;
+      box-shadow: 0 0 15px #ff7b7b;
+    }
+
+    .form-card h3 {
+      font-size: 1.4rem;
+      font-weight: 500;
+      margin-bottom: 16px;
+      color: #eef;
+    }
+
+    .input-group input {
+      width: 100%;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 40px;
+      padding: 16px 20px;
+      font-size: 1.3rem;
+      color: white;
+      outline: none;
+      transition: 0.2s;
+      margin-bottom: 24px;
+    }
+
+    .input-group input:focus {
+      border-color: #00ffc0;
+      box-shadow: 0 0 12px #00ffc0;
+    }
+
+    .input-group input::placeholder {
+      color: rgba(255, 255, 255, 0.4);
+    }
+
+    .upload-area {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .upload-area p {
+      font-size: 1rem;
+      color: #ccd;
+      margin-bottom: 12px;
+    }
+
+    .upload-area span {
+      font-size: 0.8rem;
+      opacity: 0.6;
+    }
+
+    .upload-btn {
+      display: inline-block;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px dashed rgba(255, 255, 255, 0.3);
+      border-radius: 60px;
+      padding: 14px 30px;
+      font-size: 1rem;
+      color: white;
+      cursor: pointer;
+      transition: 0.2s;
+      margin-bottom: 16px;
+    }
+
+    .upload-btn:hover {
+      background: rgba(0, 255, 200, 0.15);
+      border-color: #00ffc0;
+    }
+
+    .preview {
+      width: 100%;
+      min-height: 80px;
+      border-radius: 20px;
+      background: rgba(0, 0, 0, 0.2);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 0.9rem;
+      color: #aab;
+    }
+
+    .preview img {
+      max-width: 100%;
+      max-height: 150px;
+      border-radius: 16px;
+      border: 2px solid #00ffc0;
+    }
+
+    .simpan-btn {
+      width: 100%;
+      background: linear-gradient(145deg, #00c9b6, #0099ff);
+      border: none;
+      border-radius: 60px;
+      padding: 18px;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      cursor: pointer;
+      box-shadow: 0 8px 0 #006688;
+      transition: all 0.1s ease;
+      margin-top: 8px;
+    }
+
+    .simpan-btn:active {
+      transform: translateY(5px);
+      box-shadow: 0 3px 0 #006688;
+    }
+
+    .simpan-btn:disabled {
+      opacity: 0.4;
+      transform: none;
+      box-shadow: 0 8px 0 #006688;
+      cursor: not-allowed;
+    }
+
+    .riwayat-card {
+      padding: 20px;
+    }
+
+    .riwayat-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .riwayat-header h3 {
+      font-size: 1.2rem;
+      font-weight: 500;
+    }
+
+    .hapus-btn {
+      background: rgba(255, 70, 70, 0.2);
+      border: 1px solid rgba(255, 100, 100, 0.4);
+      padding: 6px 14px;
+      border-radius: 40px;
+      color: #ffb3b3;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .hapus-btn:hover {
+      background: rgba(255, 70, 70, 0.3);
+      border-color: #ff7b7b;
+    }
+
+    .riwayat-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #99aabb;
+      padding: 20px;
+      font-style: italic;
+    }
+
+    .transaksi-item {
+      background: rgba(0, 0, 0, 0.25);
+      border-radius: 24px;
+      padding: 14px 18px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-left: 4px solid;
+      backdrop-filter: blur(4px);
+    }
+
+    .transaksi-item.accepted {
+      border-left-color: #00ffa2;
+    }
+
+    .transaksi-item.rejected {
+      border-left-color: #ff5e7c;
+    }
+
+    .transaksi-item.withdraw {
+      border-left-color: #ffae42;
+    }
+
+    .transaksi-info .nominal {
+      font-weight: 700;
+      font-size: 1.2rem;
+    }
+
+    .transaksi-info .meta {
+      font-size: 0.7rem;
+      color: #aabbcc;
+      margin-top: 4px;
+    }
+
+    .transaksi-status {
+      text-align: right;
+    }
+
+    .transaksi-status .status-badge {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 40px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .transaksi-status .confidence {
+      font-size: 0.7rem;
+      margin-top: 4px;
+      color: #aaf0e0;
+    }
+
+    .modal-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s;
+    }
+
+    .modal-overlay.show {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal-content {
+      background: rgba(20, 30, 40, 0.9);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 48px;
+      padding: 40px 32px;
+      max-width: 360px;
+      width: 90%;
+      text-align: center;
+      color: white;
+      box-shadow: 0 30px 60px rgba(0, 20, 20, 0.8);
+    }
+
+    .spinner {
+      width: 70px;
+      height: 70px;
+      border: 6px solid rgba(0, 255, 200, 0.15);
+      border-top: 6px solid #00ffc0;
+      border-radius: 50%;
+      animation: spin 1s infinite linear;
+      margin: 0 auto 24px;
+      box-shadow: 0 0 20px #00ffc0;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .modal-content h2 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .loading-message {
+      font-size: 1rem;
+      color: #bbddff;
+      min-height: 50px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Kartu Total Tabungan -->
+    <div class="glass-card total-card">
+      <div class="total-header">
+        <span class="title">TabunganImbian</span>
+        <span class="badge">AI Verifikasi</span>
+      </div>
+      <div class="total-amount">Rp 0</div>
+      <div class="target-info">
+        <span>Target: Rp 5.000.000</span>
+        <span class="percentage">0%</span>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 0%;"></div>
+      </div>
+      <div class="action-buttons">
+        <button class="action-btn nabung" id="nabungBtn">↓ Nabung</button>
+        <button class="action-btn tarik" id="tarikBtn">↑ Tarik</button>
+      </div>
+    </div>
+
+    <!-- Form Setor Tunai -->
+    <div class="glass-card form-card" id="formNabung">
+      <h3>Mau nabung berapa?</h3>
+      <div class="input-group">
+        <input type="number" id="amountInput" placeholder="Rp 0" min="1000" step="1000">
+      </div>
+
+      <div class="upload-area">
+        <p>Bukti Foto <span>(Biar Valid)</span></p>
+        <label for="fileInput" class="upload-btn">Ambil Foto Uang</label>
+        <input type="file" id="fileInput" accept="image/*" capture="environment" hidden>
+        <div class="preview" id="preview"></div>
+      </div>
+
+      <button class="simpan-btn" id="simpanBtn">SIMPAN TABUNGAN</button>
+    </div>
+
+    <!-- Riwayat Transaksi -->
+    <div class="glass-card riwayat-card">
+      <div class="riwayat-header">
+        <h3>Riwayat Transaksi</h3>
+        <button class="hapus-btn" id="hapusRiwayatBtn">Hapus Riwayat</button>
+      </div>
+      <div class="riwayat-list" id="riwayatList">
+        <div class="empty-state">Belum ada transaksi</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Loading AI -->
+  <div class="modal-overlay" id="loadingModal">
+    <div class="modal-content">
+      <div class="spinner"></div>
+      <h2>Sabar ya…</h2>
+      <p class="loading-message" id="loadingMessage">AI sedang mendeteksi objek...</p>
+    </div>
+  </div>
+
+  <script>
+    // ==================== KONFIGURASI ====================
+    const TARGET = 5000000;
+    let userId = localStorage.getItem('tabungan_userId');
+    if (!userId) {
+      userId = 'user_' + Math.random().toString(36).substr(2, 9);
+      localStorage.setItem('tabungan_userId', userId);
+    }
+
+    // Elemen DOM
+    const totalEl = document.querySelector('.total-amount');
+    const percentageEl = document.querySelector('.percentage');
+    const progressFill = document.querySelector('.progress-fill');
+    const amountInput = document.getElementById('amountInput');
+    const fileInput = document.getElementById('fileInput');
+    const previewDiv = document.getElementById('preview');
+    const simpanBtn = document.getElementById('simpanBtn');
+    const riwayatList = document.getElementById('riwayatList');
+    const hapusRiwayatBtn = document.getElementById('hapusRiwayatBtn');
+    const nabungBtn = document.getElementById('nabungBtn');
+    const tarikBtn = document.getElementById('tarikBtn');
+    const loadingModal = document.getElementById('loadingModal');
+    const loadingMessage = document.getElementById('loadingMessage');
+
+    // State
+    let currentBalance = 0;
+
+    // ==================== HELPER ====================
+    function formatRupiah(angka) {
+      return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(angka);
+    }
+
+    function updateTotalUI() {
+      totalEl.textContent = formatRupiah(currentBalance);
+      const persen = Math.min((currentBalance / TARGET) * 100, 100);
+      percentageEl.textContent = `${Math.floor(persen)}%`;
+      progressFill.style.width = `${persen}%`;
+    }
+
+    // Render riwayat dari data server
+    function renderRiwayat(history = []) {
+      if (!history || history.length === 0) {
+        riwayatList.innerHTML = '<div class="empty-state">Belum ada transaksi</div>';
+        return;
+      }
+
+      let html = '';
+      history.slice().reverse().forEach(t => {
+        let statusClass = '';
+        let statusText = '';
+        if (t.status === 'ACCEPTED') {
+          statusClass = 'accepted';
+          statusText = '✓ Diterima';
+        } else if (t.status === 'WITHDRAW') {
+          statusClass = 'withdraw';
+          statusText = '↑ Tarik';
+        } else {
+          statusClass = 'rejected';
+          statusText = '✗ Ditolak';
+        }
+
+        const nominal = Math.abs(t.amount);
+        const date = new Date(t.date).toLocaleString('id-ID');
+
+        html += `
+          <div class="transaksi-item ${statusClass}">
+            <div class="transaksi-info">
+              <div class="nominal">${formatRupiah(nominal)}</div>
+              <div class="meta">${date}</div>
+            </div>
+            <div class="transaksi-status">
+              <div class="status-badge">${statusText}</div>
+              ${t.confidence ? `<div class="confidence">AI ${t.confidence}%</div>` : ''}
+              ${t.reason ? `<div class="confidence" style="color:#ffb0b0;">${t.reason.substring(0,30)}...</div>` : ''}
+            </div>
+          </div>
+        `;
+      });
+      riwayatList.innerHTML = html;
+    }
+
+    // ==================== AMBIL DATA USER DARI SERVER ====================
+    async function loadUserData() {
+      try {
+        const res = await fetch(`/api/Check?userId=${userId}`);
+        if (!res.ok) throw new Error('Gagal mengambil data');
+        const user = await res.json();
+        currentBalance = user.balance || 0;
+        updateTotalUI();
+        renderRiwayat(user.history);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // ==================== MODAL LOADING ====================
+    const loadingTexts = [
+      'AI sedang mendeteksi objek...',
+      'Menganalisis warna dan nominal...',
+      'Memeriksa keaslian uang...',
+      'Membandingkan dengan input...',
+      'Menentukan keputusan akhir...'
+    ];
+    let textInterval = null;
+
+    function startLoadingAnimation() {
+      let index = 0;
+      loadingMessage.textContent = loadingTexts[0];
+      textInterval = setInterval(() => {
+        index = (index + 1) % loadingTexts.length;
+        loadingMessage.textContent = loadingTexts[index];
+      }, 1500);
+    }
+
+    function stopLoadingAnimation() {
+      if (textInterval) {
+        clearInterval(textInterval);
+        textInterval = null;
+      }
+    }
+
+    function showModal() {
+      loadingModal.classList.add('show');
+      startLoadingAnimation();
+      simpanBtn.disabled = true;
+    }
+
+    function hideModal() {
+      loadingModal.classList.remove('show');
+      stopLoadingAnimation();
+      simpanBtn.disabled = false;
+    }
+
+    // ==================== PREVIEW FOTO ====================
+    fileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) {
+        previewDiv.innerHTML = '';
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (ev) => {
+        const img = document.createElement('img');
+        img.src = ev.target.result;
+        previewDiv.innerHTML = '';
+        previewDiv.appendChild(img);
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // Fungsi kompresi gambar
+    function compressImage(file, maxWidth = 800, quality = 0.7) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          const img = new Image();
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const scale = maxWidth / img.width;
+            canvas.width = maxWidth;
+            canvas.height = img.height * scale;
+
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+            const compressed = canvas.toDataURL('image/jpeg', quality);
+            resolve(compressed);
+          };
+          img.src = event.target.result;
+        };
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // ==================== SETOR TUNAI (DENGAN AI) ====================
+    async function handleSimpan() {
+      const amount = parseInt(amountInput.value);
+      const file = fileInput.files[0];
+
+      if (!amount || amount < 1000) {
+        alert('Masukkan nominal tabungan minimal Rp 1.000');
+        return;
+      }
+      if (!file) {
+        alert('Ambil foto uang terlebih dahulu');
+        return;
+      }
+
+      // Konversi ke base64 dengan kompresi
+      const base64 = await compressImage(file);
+
+      showModal();
+
+      try {
+        const response = await fetch('/api/Check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'deposit',
+            userId,
+            amount,
+            image: base64
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Server error');
+        }
+
+        // Jika transaksi diterima, result akan mengandung total dan history terbaru
+        if (result.final_decision?.status === 'ACCEPTED' && result.analysis?.confidence_level >= 85) {
+          currentBalance = result.total;
+          renderRiwayat(result.history);
+          updateTotalUI();
+          alert(`✅ Tabungan diterima! Saldo bertambah ${formatRupiah(amount)}`);
+        } else if (result.final_decision) {
+          // Ditolak AI
+          alert(`❌ Gagal: ${result.final_decision.reason}`);
+        } else if (result.total !== undefined) {
+          // Kasus withdraw atau lainnya
+          currentBalance = result.total;
+          renderRiwayat(result.history);
+          updateTotalUI();
+        } else {
+          alert('Respon tidak dikenal');
+        }
+
+        // Reset form
+        amountInput.value = '';
+        fileInput.value = '';
+        previewDiv.innerHTML = '';
+
+      } catch (error) {
+        console.error(error);
+        alert('Terjadi kesalahan: ' + error.message);
+      } finally {
+        hideModal();
+      }
+    }
+
+    // ==================== TARIK TUNAI (TANPA AI) ====================
+    async function handleTarik() {
+      const amountPrompt = prompt('Masukkan nominal penarikan:', '');
+      if (!amountPrompt) return;
+
+      const amount = parseInt(amountPrompt);
+      if (isNaN(amount) || amount <= 0) {
+        alert('Nominal tidak valid');
+        return;
+      }
+
+      showModal(); // pakai modal loading sebagai indikator proses
+
+      try {
+        const response = await fetch('/api/Check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'withdraw',
+            userId,
+            amount
+          })
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+          throw new Error(result.error || 'Server error');
+        }
+
+        if (result.total !== undefined) {
+          currentBalance = result.total;
+          renderRiwayat(result.history);
+          updateTotalUI();
+          alert(`✅ Penarikan ${formatRupiah(amount)} berhasil`);
+        } else {
+          alert('Respon tidak dikenal');
+        }
+
+      } catch (error) {
+        console.error(error);
+        alert('Gagal: ' + error.message);
+      } finally {
+        hideModal();
+      }
+    }
+
+    // ==================== HAPUS RIWAYAT (SERVER SIDE) ====================
+    async function hapusRiwayat() {
+      if (!confirm('Hapus semua riwayat transaksi? Data tidak dapat dikembalikan.')) return;
+
+      try {
+        const response = await fetch('/api/Check', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ type: 'clear', userId })
+        });
+
+        if (!response.ok) throw new Error('Gagal menghapus');
+
+        const result = await response.json();
+        currentBalance = result.balance;
+        renderRiwayat(result.history);
+        updateTotalUI();
+        alert('Riwayat dihapus');
+      } catch (err) {
+        alert(err.message);
+      }
+    }
+
+    // ==================== EVENT LISTENERS ====================
+    simpanBtn.addEventListener('click', handleSimpan);
+    tarikBtn.addEventListener('click', handleTarik);
+    hapusRiwayatBtn.addEventListener('click', hapusRiwayat);
+    nabungBtn.addEventListener('click', () => {
+      document.getElementById('formNabung').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    // ==================== INISIALISASI ====================
+    loadUserData();
+  </script>
+</body>
+</html>
