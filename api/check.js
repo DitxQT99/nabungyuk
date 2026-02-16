@@ -1,3 +1,14 @@
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: '15mb'
+    }
+  }
+};
+
+import { createUserIfNotExists, updateBalance, getUser, clearHistory } from './Base.js';
+
+
 import { createUserIfNotExists, updateBalance, getUser, clearHistory } from './Base.js';
 
 export default async function handler(req, res) {
