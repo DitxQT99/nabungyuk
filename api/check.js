@@ -8,9 +8,6 @@ export const config = {
 
 import { createUserIfNotExists, updateBalance, getUser, clearHistory } from './Base.js';
 
-
-import { createUserIfNotExists, updateBalance, getUser, clearHistory } from './Base.js';
-
 export default async function handler(req, res) {
 
   if (req.method === 'GET') {
